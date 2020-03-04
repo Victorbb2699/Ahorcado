@@ -1,8 +1,9 @@
-package dad.javafx.ahorcado.app;
+package dad.javafx.ahorcado;
 
-import dad.javafx.ahorcado.clases.Persistente;
-import dad.javafx.ahorcado.clases.Puntuacion;
-import dad.javafx.ahorcado.controllers.rootController;
+
+import dad.javafx.ahorcado.controller.AhorcadoRootController;
+import dad.javafx.ahorcado.ui.Persistencia;
+import dad.javafx.ahorcado.ui.Puntuacion;
 import javafx.application.Application;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
@@ -12,40 +13,45 @@ import javafx.stage.Stage;
 
 public class AhorcadoApp extends Application {
 	
-	private rootController controller;
+	
+	//controllers
+	private AhorcadoRootController App;
+	
+	//model
+	
 	private ListProperty<String> palabras = new SimpleListProperty<String>(FXCollections.observableArrayList());
 	private ListProperty<Puntuacion> puntuaciones = new SimpleListProperty<Puntuacion>(FXCollections.observableArrayList());
 	
+	
+
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		
-		controller = new rootController();
-		//bindeos
+		App = new AhorcadoRootController();
 		
-		controller.getModel().palabrasProperty().bind(palabras);
-		controller.getModel().puntuacionesProperty().bind(puntuaciones);
+		//binds
+		App.getModel().palabrasProperty().bind(palabras);
+		App.getModel().puntuacionesProperty().bind(puntuaciones);
 		
-		Scene scene = new Scene(controller.getView(), 640, 480);
-
-		primaryStage.setTitle("Ahorcado JavaFX");
+		Scene scene = new Scene(App.getView());
+		primaryStage.setTitle("Ahorcado");
 		primaryStage.setScene(scene);
 		primaryStage.show();
-		
+
 	}
 	
 	@Override
 	public void init() throws Exception {
-		super.init();		
-		palabras.addAll(Persistente.leerPalabras());	
-		puntuaciones.addAll(Persistente.leePuntuaciones());
+		super.init();
+		palabras.addAll(Persistencia.leerPalabras());	
+		puntuaciones.addAll(Persistencia.leerPuntuaciones());
 	}
 	
 	@Override
 	public void stop() throws Exception {
 		super.stop();
-		Persistente.guardarPalabras(palabras);
-		Persistente.guardarPuntos(puntuaciones);
-		
+		Persistencia.guardarPalabras(palabras.getValue());
+		Persistencia.guardarPuntuaciones(puntuaciones.getValue());
 	}
 
 	public static void main(String[] args) {
